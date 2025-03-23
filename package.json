@@ -20,7 +20,7 @@
     "start": "node dist/index.js",
     "start:connect": "CONNECT_TO_EXISTING_BROWSER=true node dist/index.js",
     "start:connect:custom": "CONNECT_TO_EXISTING_BROWSER=true BROWSER_URL=\"http://localhost:9222\" node dist/index.js",
-    "test": "jest",
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest",
     "test:connection": "node tests/test-connect.js",
     "lint": "eslint src/**/*.ts",
     "clean": "rimraf dist",

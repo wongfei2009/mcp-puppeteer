@@ -1,6 +1,8 @@
 // Basic test file for browser manager functionality
-import { BrowserManager } from '../dist/browser/browser-manager.js';
+import { BrowserManager } from '../dist/src/browser/browser-manager.js';
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
+import { jest } from '@jest/globals';
+import { describe, beforeEach, afterEach, test, expect } from '@jest/globals';
 
 // Mock server for testing
 const mockServer = {
