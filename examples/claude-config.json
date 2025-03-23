@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "puppeteer": {
+      "command": "npx",
+      "args": ["-y", "github:wongfei2009/mcp-puppeteer"],
+      "env": {
+        "CONNECT_TO_EXISTING_BROWSER": "false",
+        "PUPPETEER_ARGS": "{\"headless\": false, \"defaultViewport\": {\"width\": 1280, \"height\": 800}}"
+      }
+    }
+  }
+}
