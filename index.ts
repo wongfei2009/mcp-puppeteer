@@ -107,32 +107,62 @@ const consoleLogs: string[] = [];
 const screenshots = new Map<string, string>();
 
 async function ensureBrowser() {
+  console.error('Starting ensureBrowser function');
+  console.error(`Environment variables: CONNECT_TO_EXISTING_BROWSER=${process.env.CONNECT_TO_EXISTING_BROWSER}, BROWSER_URL=${process.env.BROWSER_URL}`);
+  
   if (!browser) {
-    // Default arguments for different environments
-    const npx_args = { headless: false };
-    const docker_args = { headless: true, args: ["--no-sandbox", "--single-process", "--no-zygote"] };
+    // Check if we should connect to existing browser or launch a new one
+    let connectToExisting = process.env.CONNECT_TO_EXISTING_BROWSER === 'true';
+    const browserURL = process.env.BROWSER_URL || 'http://localhost:9222';
     
-    // Get custom Puppeteer arguments from environment variables if available
-    let puppeteerArgs = {};
-    if (process.env.PUPPETEER_ARGS) {
+    console.error(`Connect to existing: ${connectToExisting}, Browser URL: ${browserURL}`);
+    
+    if (connectToExisting) {
+      console.error(`Connecting to existing browser at: ${browserURL}`);
       try {
-        puppeteerArgs = JSON.parse(process.env.PUPPETEER_ARGS);
-        console.error("Using custom Puppeteer arguments:", puppeteerArgs);
+        browser = await puppeteer.connect({ 
+          browserURL,
+          defaultViewport: null
+        });
+        console.error("Successfully connected to existing browser instance");
       } catch (error) {
-        console.error("Error parsing PUPPETEER_ARGS:", error);
+        console.error(`Failed to connect to browser at ${browserURL}:`, error);
+        console.error("Falling back to launching a new browser instance");
+        // Fall back to launching a new browser
+        connectToExisting = false;
       }
     }
     
-    // Merge the appropriate default args with custom args
-    const launchArgs = {
-      ...(process.env.DOCKER_CONTAINER ? docker_args : npx_args),
-      ...puppeteerArgs
-    };
+    // Only launch a new browser if we're not connecting to an existing one or if connection failed
+    if (!connectToExisting) {
+      // Default arguments for different environments
+      const npx_args = { headless: false };
+      const docker_args = { headless: true, args: ["--no-sandbox", "--single-process", "--no-zygote"] };
+      
+      // Get custom Puppeteer arguments from environment variables if available
+      let puppeteerArgs = {};
+      if (process.env.PUPPETEER_ARGS) {
+        try {
+          puppeteerArgs = JSON.parse(process.env.PUPPETEER_ARGS);
+          console.error("Using custom Puppeteer arguments:", puppeteerArgs);
+        } catch (error) {
+          console.error("Error parsing PUPPETEER_ARGS:", error);
+        }
+      }
+      
+      // Merge the appropriate default args with custom args
+      const launchArgs = {
+        ...(process.env.DOCKER_CONTAINER ? docker_args : npx_args),
+        ...puppeteerArgs
+      };
+      
+      console.error("Launching browser with arguments:", launchArgs);
+      browser = await puppeteer.launch(launchArgs);
+    }
     
-    console.error("Launching browser with arguments:", launchArgs);
-    browser = await puppeteer.launch(launchArgs);
-    const pages = await browser.pages();
-    page = pages[0];
+    // Get the first page or create a new one if none exists
+    const pages = await browser!.pages();
+    page = pages.length > 0 ? pages[0] : await browser!.newPage();
 
     page.on("console", (msg) => {
       const logEntry = `[${msg.type()}] ${msg.text()}`;
@@ -422,7 +452,44 @@ async function runServer() {
 
 runServer().catch(console.error);
 
-process.stdin.on("close", () => {
+process.stdin.on("close", async () => {
   console.error("Puppeteer MCP Server closed");
+  
+  // Properly disconnect from the browser if it's a connected instance
+  if (browser) {
+    try {
+      if (process.env.CONNECT_TO_EXISTING_BROWSER === 'true') {
+        console.error("Disconnecting from browser");
+        await browser.disconnect();
+      } else {
+        console.error("Closing browser");
+        await browser.close();
+      }
+    } catch (error) {
+      console.error("Error closing/disconnecting browser:", error);
+    }
+  }
+  
   server.close();
+});
+
+// Handle process exit
+process.on('SIGINT', async () => {
+  console.error("Received SIGINT, shutting down");
+  
+  if (browser) {
+    try {
+      if (process.env.CONNECT_TO_EXISTING_BROWSER === 'true') {
+        console.error("Disconnecting from browser");
+        await browser.disconnect();
+      } else {
+        console.error("Closing browser");
+        await browser.close();
+      }
+    } catch (error) {
+      console.error("Error during shutdown:", error);
+    }
+  }
+  
+  process.exit(0);
 });

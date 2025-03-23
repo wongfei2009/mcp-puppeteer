@@ -17,7 +17,10 @@
   "scripts": {
     "build": "tsc && shx chmod +x dist/*.js",
     "prepare": "npm run build",
-    "watch": "tsc --watch"
+    "watch": "tsc --watch",
+    "start": "node dist/index.js",
+    "start:connect": "CONNECT_TO_EXISTING_BROWSER=true node dist/index.js",
+    "start:connect:custom": "CONNECT_TO_EXISTING_BROWSER=true BROWSER_URL=\"http://localhost:9222\" node dist/index.js"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "1.0.1",

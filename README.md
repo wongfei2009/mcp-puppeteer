@@ -62,8 +62,67 @@ The server provides access to two types of resources:
 - JavaScript execution
 - Basic web interaction (navigation, clicking, form filling)
 - **Configurable Puppeteer options** through environment variables
+- **Connect to existing Chrome instances** for debugging or reusing sessions
 
 ## Configuration
+
+### Connecting to Existing Chrome Instances
+
+This server can connect to an already running Chrome instance instead of launching a new browser. This is useful for debugging, reusing browser sessions, or reducing resource usage.
+
+#### 1. Launch Chrome with Remote Debugging Enabled
+
+First, you need to start Chrome with remote debugging enabled:
+
+**Windows:**
+```
+chrome.exe --remote-debugging-port=9222
+```
+
+**macOS:**
+```
+/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --remote-debugging-port=9222
+```
+
+**Linux:**
+```
+google-chrome --remote-debugging-port=9222
+```
+
+#### 2. Connect MCP Puppeteer to the Running Instance
+
+Use one of the provided npm scripts:
+
+```
+# Connect to Chrome at default address (http://localhost:9222)
+npm run start:connect
+
+# Connect to Chrome at a custom address
+BROWSER_URL="http://localhost:9222" npm run start:connect
+```
+
+Or set environment variables directly:
+
+```
+CONNECT_TO_EXISTING_BROWSER=true BROWSER_URL="http://localhost:9222" node dist/index.js
+```
+
+#### Configuration in Claude MCP Config
+
+```json
+{
+  "mcpServers": {
+    "puppeteer": {
+      "command": "npx",
+      "args": ["-y", "github:afshawnlotfi/mcp-configurable-puppeteer"],
+      "env": {
+        "CONNECT_TO_EXISTING_BROWSER": "true",
+        "BROWSER_URL": "http://localhost:9222"
+      }
+    }
+  }
+}
+```
 
 ### Using with Custom Puppeteer Options
 
