@@ -113,7 +113,7 @@ function setupCleanupHandlers(server: Server, browserManager: BrowserManager) {
   });
 
   // Handle process exit
-  process.on('SIGINT', async () => {
+  process.on("SIGINT", async () => {
     console.error("Received SIGINT, shutting down");
     await browserManager.closeBrowser();
     process.exit(0);

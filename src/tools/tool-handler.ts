@@ -20,28 +20,28 @@ export class ToolHandler {
       const page = await this.browserManager.ensureBrowser();
 
       switch (name) {
-        case "puppeteer_navigate":
-          return this.handleNavigate(page, args);
-        case "puppeteer_screenshot":
-          return this.handleScreenshot(page, args);
-        case "puppeteer_click":
-          return this.handleClick(page, args);
-        case "puppeteer_fill":
-          return this.handleFill(page, args);
-        case "puppeteer_select":
-          return this.handleSelect(page, args);
-        case "puppeteer_hover":
-          return this.handleHover(page, args);
-        case "puppeteer_evaluate":
-          return this.handleEvaluate(page, args);
-        default:
-          return {
-            content: [{
-              type: "text",
-              text: `Unknown tool: ${name}`,
-            }],
-            isError: true,
-          };
+      case "puppeteer_navigate":
+        return this.handleNavigate(page, args);
+      case "puppeteer_screenshot":
+        return this.handleScreenshot(page, args);
+      case "puppeteer_click":
+        return this.handleClick(page, args);
+      case "puppeteer_fill":
+        return this.handleFill(page, args);
+      case "puppeteer_select":
+        return this.handleSelect(page, args);
+      case "puppeteer_hover":
+        return this.handleHover(page, args);
+      case "puppeteer_evaluate":
+        return this.handleEvaluate(page, args);
+      default:
+        return {
+          content: [{
+            type: "text",
+            text: `Unknown tool: ${name}`,
+          }],
+          isError: true,
+        };
       }
     } catch (error) {
       return {
@@ -218,9 +218,9 @@ export class ToolHandler {
           originalConsole: { ...console },
         };
 
-        ['log', 'info', 'warn', 'error'].forEach(method => {
+        ["log", "info", "warn", "error"].forEach(method => {
           (console as any)[method] = (...args: any[]) => {
-            window.mcpHelper.logs.push(`[${method}] ${args.join(' ')}`);
+            window.mcpHelper.logs.push(`[${method}] ${args.join(" ")}`);
             (window.mcpHelper.originalConsole as any)[method](...args);
           };
         });
@@ -239,7 +239,7 @@ export class ToolHandler {
         content: [
           {
             type: "text",
-            text: `Execution result:\n${JSON.stringify(result, null, 2)}\n\nConsole output:\n${logs.join('\n')}`,
+            text: `Execution result:\n${JSON.stringify(result, null, 2)}\n\nConsole output:\n${logs.join("\n")}`,
           },
         ],
         isError: false,

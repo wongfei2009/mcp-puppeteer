@@ -19,13 +19,13 @@ export class BrowserManager {
    * or creating a new instance based on configuration.
    */
   async ensureBrowser(): Promise<Page> {
-    console.error('Starting ensureBrowser function');
+    console.error("Starting ensureBrowser function");
     console.error(`Environment variables: CONNECT_TO_EXISTING_BROWSER=${process.env.CONNECT_TO_EXISTING_BROWSER}, BROWSER_URL=${process.env.BROWSER_URL}`);
     
     if (!this.browser) {
       // Check if we should connect to existing browser or launch a new one
-      let connectToExisting = process.env.CONNECT_TO_EXISTING_BROWSER === 'true';
-      const browserURL = process.env.BROWSER_URL || 'http://localhost:9222';
+      let connectToExisting = process.env.CONNECT_TO_EXISTING_BROWSER === "true";
+      const browserURL = process.env.BROWSER_URL || "http://localhost:9222";
       
       console.error(`Connect to existing: ${connectToExisting}, Browser URL: ${browserURL}`);
       
@@ -101,7 +101,7 @@ export class BrowserManager {
   async closeBrowser(): Promise<void> {
     if (this.browser) {
       try {
-        if (process.env.CONNECT_TO_EXISTING_BROWSER === 'true') {
+        if (process.env.CONNECT_TO_EXISTING_BROWSER === "true") {
           console.error("Disconnecting from browser");
           await this.browser.disconnect();
         } else {
