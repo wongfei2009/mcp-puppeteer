@@ -1,4 +1,4 @@
-# MCP Configurable Puppeteer
+# MCP Puppeteer
 
 A Model Context Protocol server that provides browser automation capabilities using Puppeteer. This server enables LLMs to interact with web pages, take screenshots, and execute JavaScript in a real browser environment, with the ability to customize Puppeteer launch options through environment variables.
 

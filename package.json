@@ -1,5 +1,5 @@
 {
-  "name": "mcp-configurable-puppeteer",
+  "name": "mcp-puppeteer",
   "version": "0.1.0",
   "description": "MCP server for browser automation using Puppeteer with configurable options",
   "license": "MIT",
@@ -8,7 +8,7 @@
   "bugs": "https://github.com/wongfei2009/mcp-puppeteer/issues",
   "type": "module",
   "bin": {
-    "mcp-configurable-puppeteer": "dist/index.js"
+    "mcp-puppeteer": "dist/index.js"
   },
   "files": [
     "dist"
