@@ -2,6 +2,9 @@ import { CallToolResult, TextContent, ImageContent } from "@modelcontextprotocol
 import { BrowserManager } from "../browser/browser-manager.js";
 import { ResourceManager } from "../resources/resource-manager.js";
 
+// Add missing window type to avoid ESLint errors when working with browser context
+declare const window: any;
+
 // Handler for all tool invocations
 export class ToolHandler {
   private browserManager: BrowserManager;
@@ -212,6 +215,8 @@ export class ToolHandler {
    */
   private async handleEvaluate(page: any, args: any): Promise<CallToolResult> {
     try {
+      // Note: window is being accessed within the browser context via page.evaluate,
+      // not in the Node.js context, so TypeScript declaration above handles the ESLint warning
       await page.evaluate(() => {
         window.mcpHelper = {
           logs: [],
@@ -231,7 +236,7 @@ export class ToolHandler {
       const logs = await page.evaluate(() => {
         Object.assign(console, window.mcpHelper.originalConsole);
         const logs = window.mcpHelper.logs;
-        delete (window as any).mcpHelper;
+        delete window.mcpHelper;
         return logs;
       });
 

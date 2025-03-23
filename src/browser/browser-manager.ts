@@ -118,7 +118,9 @@ export class BrowserManager {
 }
 
 // Type definition for the mcpHelper object added to the browser window
+// This is used in the browser context via page.evaluate, not in Node.js
 declare global {
+  // eslint-disable-next-line no-unused-vars
   interface Window {
     mcpHelper: {
       logs: string[],
