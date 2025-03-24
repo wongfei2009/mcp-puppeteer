@@ -23,7 +23,7 @@ export async function setupServer() {
     console.error("Creating server instance...");
     const server = new Server(
       {
-        name: "mcp-configurable-puppeteer",
+        name: "mcp-puppeteer",
         version: "0.1.0",
       },
       {
